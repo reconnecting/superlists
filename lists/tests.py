@@ -12,10 +12,22 @@ class HomePageTest(TestCase):
         self.assertEqual(found.func, home_page)
 
     def test_home_page_returns_correct_html(self):
+        # 校验经过渲染的html的字符串与请求的html字符串是一致
         request = HttpRequest()
         response = home_page(request)
         expected_html = render_to_string('home.html')
-        self.assertEqual(response.content.decode(), expected_html)
+        self.assertEqual(response.content.decode(), expected_html)  # decode()把字节转换为unicode字符串
         # self.assertTrue(response.content.startswith(b'<html>'))
         # self.assertIn(b'<title>To-Do lists</title>', response.content)
         # self.assertTrue(response.content.endswith(b'<html>'))
+
+    def test_home_page_can_save_a_POST_request(self):
+        # 校验经过渲染的html的字符串与请求的html字符串是一致
+        request = HttpRequest()
+        request.method = "POST"
+        request.POST['item_text'] = 'A new list item'
+
+        response = home_page(request)
+        self.assertIn('A new list item', response.content.decode())
+        expected_html = render_to_string('home.html', {'new_item_text': 'A new list item'})
+        self.assertEqual(response.content.decode(), expected_html)
