@@ -1,0 +1,4 @@
+##ignore this file##
+*.xml
+*.iml
+*.pyc
