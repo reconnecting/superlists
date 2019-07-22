@@ -1,9 +1,9 @@
 from selenium import webdriver
 import unittest
 from selenium.webdriver.common.keys import Keys
+from django.test import LiveServerTestCase
 
-
-class NewVistorTest(unittest.TestCase):
+class NewVistorTest(LiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Chrome()
         self.browser.implicitly_wait(10)
@@ -18,7 +18,7 @@ class NewVistorTest(unittest.TestCase):
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         # 打开浏览器
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # 断言to-do在title、h1标签里面
         self.assertIn('To-Do', self.browser.title)
@@ -47,8 +47,3 @@ class NewVistorTest(unittest.TestCase):
         self.check_for_row_in_list_table('2:Use peacock feathers to make a fly')
 
         self.fail('finish the test')
-
-
-if __name__ == '__main__':
-    # unittest.main(warnings='ignore')
-    unittest.main()
