@@ -33,11 +33,9 @@ class NewVistorTest(LiveServerTestCase):
         inputbox.send_keys('Buy peacock feathers')
         inputbox.send_keys(Keys.ENTER)
 
-        # import time
-        # time.sleep(10)
-        # table = self.browser.find_element_by_id('id_list_table')
-        # rows = table.find_elements_by_tag_name('tr')
-        # self.assertIn('1:Buy peacock feathers', [row.text for row in rows])
+        edith_list_url = self.browser.current_url
+        self.assertRegex(edith_list_url, '/lists/.+')
+        self.check_for_row_in_list_table('1:Buy peacock feathers')
 
         inputbox= self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Use peacock feathers to make a fly')
@@ -45,5 +43,30 @@ class NewVistorTest(LiveServerTestCase):
 
         self.check_for_row_in_list_table('1:Buy peacock feathers')
         self.check_for_row_in_list_table('2:Use peacock feathers to make a fly')
+
+        ## 一个新用户操作同样的步骤,因为是新页面，所以之前的东西都不应该存在
+        self.browser.quit()
+        self.browser = webdriver.Chrome()
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy peacock feathers', page_text)
+        self.assertNotIn('make a fly', page_text)
+
+        import time
+        time.sleep(5)
+        # 新用户输入新内容
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Buy milk')
+        inputbox.send_keys(Keys.ENTER)
+
+        # 断言链接不一样
+        francis_list_url = self.browser.current_url
+        self.assertRegex(francis_list_url, '/lists/.+')
+        self.assertNotEqual(francis_list_url, edith_list_url)
+
+        # 断言
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy peacock feathers', page_text)
+        self.assertIn('Buy milk', page_text)
 
         self.fail('finish the test')
