@@ -19,5 +19,6 @@ from lists import views as myviews
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
-    url(r'^$', myviews.home_page, name='home')
+    url(r'^$', myviews.home_page, name='home'),
+    url(r'^lists/the-only-list-in-the-world/$', myviews.view_list, name='view_list')
 ]
